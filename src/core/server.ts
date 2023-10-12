@@ -1,7 +1,10 @@
 import express from 'express'
 import { env } from './env'
+import { whatsAppProvider } from './dependencies'
 
 const app = express()
+
+whatsAppProvider.start()
 
 app.use(express.json())
 
