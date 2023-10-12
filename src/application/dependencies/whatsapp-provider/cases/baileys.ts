@@ -16,10 +16,18 @@ export class BailyesWhatsAppProvider extends WhatsAppProvider {
     socket.ev.on('messages.upsert', async (body) => {
       const messageBody = body.messages[0]
       console.log(JSON.stringify(messageBody, undefined, 2))
-      if (messageBody.key.fromMe === true) {
-        this.listener.onMessage({
-          text: messageBody.message?.extendedTextMessage?.text || '',
-        })
+      const senderId = messageBody.key.remoteJid
+      if (messageBody.key.fromMe === true && typeof senderId === 'string') {
+        this.listener.onMessage(
+          {
+            text: messageBody.message?.extendedTextMessage?.text || '',
+          },
+          {
+            withText: async (text: string) => {
+              await socket.sendMessage(senderId, { text })
+            },
+          },
+        )
       }
     })
   }
