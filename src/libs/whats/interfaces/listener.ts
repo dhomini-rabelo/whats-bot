@@ -1,3 +1,7 @@
+export interface IOnMessageData {
+  text: string
+}
+
 export interface WhatsAppListener {
-  onMessage: () => void
+  onMessage: (data: IOnMessageData) => void
 }

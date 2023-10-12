@@ -1,6 +1,5 @@
 import express from 'express'
 import { env } from './env'
-import './whats'
 
 const app = express()
 

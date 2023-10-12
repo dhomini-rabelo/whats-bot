@@ -1,7 +1,7 @@
 import { WhatsAppListener } from './listener'
 
 export abstract class WhatsAppProvider {
-  constructor(private readonly listener: WhatsAppListener) { }
+  constructor(protected readonly listener: WhatsAppListener) { }
 
-  abstract start(): void
+  abstract start(): Promise<void>
 }

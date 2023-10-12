@@ -131,5 +131,9 @@ dist
 .pnp.*
 
 
-# venom-bot
+# @whiskeysockets/baileys
 tokens/
+
+
+# editor
+.vscode/
