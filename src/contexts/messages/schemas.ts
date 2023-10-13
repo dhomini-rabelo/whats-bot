@@ -55,28 +55,32 @@ export interface NumericOption extends BaseOption {
   response: string
 }
 
-export interface DefaultStep extends Question {
-  type: 'default-step'
-  options: null | Array<NumericOption | StringOption>
+export interface TextStep extends Question {
+  type: 'text-step'
   nextStepId: string
 }
 
-export interface StartStep extends Omit<DefaultStep, 'type' | 'message'> {
-  type: 'start-step'
-  startMessage: string | null
-  restartMessage: string | null
-  withResponse: boolean
+export interface OptionsStep extends Question {
+  type: 'options-step'
+  options: Array<NumericOption | StringOption>
 }
 
-export interface FinishStep extends Omit<DefaultStep, 'type' | 'options'> {
+export interface StartStep {
+  type: 'start-step'
+  startMessage?: string
+  restartMessage?: string
+  nextStepId: string
+}
+
+export interface FinishStep {
   type: 'finish-step'
-  options: null
+  message: string
 }
 
 export interface Bot {
   name: string
   description: string
-  steps: Record<string, DefaultStep | StartStep | FinishStep>
+  steps: Record<string, TextStep | OptionsStep | StartStep | FinishStep>
   responseForError: string
   // expirationTime: number = 60 * 60 - 1 hour
 }
