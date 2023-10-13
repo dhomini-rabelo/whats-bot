@@ -58,6 +58,7 @@ export interface NumericOption extends BaseOption {
 export interface DefaultStep extends Question {
   type: 'default-step'
   options: null | Array<NumericOption | StringOption>
+  nextStepId: string
 }
 
 export interface StartStep extends Omit<DefaultStep, 'type' | 'message'> {
@@ -90,7 +91,7 @@ export interface Bot {
 [client] Responde a pergunta, corretamente ou não
 [backend] Busca um Chat a partir do contato e do bot
 [backend] Processa a resposta, se necessário, irá reenviar
-[chat] Conversa continua, expira, finaliza ou reinicia
+[chat] Conversa continua, expira, finaliza[com sucesso ou não] ou reinicia
 
 * RESPOSTA GLOBAIS
 sair -> encerra a conversa
