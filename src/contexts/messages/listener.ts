@@ -4,7 +4,7 @@ import {
   IWhatsAppListener,
 } from '../../application/dependencies/whatsapp-provider/interfaces/listener'
 import { bots } from './data'
-import { Chat, StartStep, ProcessSteps, FinishStep } from './schemas'
+import { Chat, StartStep, ProcessSteps } from './schemas'
 
 const chats: Chat[] = []
 
@@ -29,8 +29,7 @@ export class WhatsAppListener implements IWhatsAppListener {
           chats[0].stepIndex = nextStepId
           await this.handleNextStep(nextStep, reply)
           if (nextStep.type === 'finish-step') {
-            const firstStep = bot.steps['1'] as StartStep
-            chats[0].stepIndex = firstStep.nextStepId
+            chats[0].stepIndex = '1'
           }
         }
       }
