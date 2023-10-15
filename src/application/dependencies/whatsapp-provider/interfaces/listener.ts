@@ -1,5 +1,10 @@
 export interface IOnMessageData {
   text: string
+  timestamp: string
+  contact: {
+    name: string
+    phone: string
+  }
 }
 
 export interface IReplier {
