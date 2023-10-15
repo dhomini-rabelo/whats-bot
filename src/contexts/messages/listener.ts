@@ -4,22 +4,26 @@ import {
   IWhatsAppListener,
 } from '../../application/dependencies/whatsapp-provider/interfaces/listener'
 import { bots } from './data'
-import { Chat, StartStep, ProcessSteps } from './schemas'
+import { Chat, StartStep, ProcessSteps, Steps } from './schemas'
 
 const chats: Chat[] = []
 
 export class WhatsAppListener implements IWhatsAppListener {
   async onMessage(data: IOnMessageData, reply: IReplier) {
     const bot = bots[0]
-    let chat = this.findChat(data)
-    if (!chat) {
+    const chat = this.findChat(data) || this.createChat(data, '1')
+    if (
+      chat.stepIndex === '1' &&
+      ['started', 'finished'].includes(chat.currentChat.status)
+    ) {
       const firstStep = bot.steps['1'] as StartStep
-      chat = this.createChat(data, firstStep.nextStepId)
       if (firstStep.startMessage) {
         await reply.withText(firstStep.startMessage)
       }
       const nextStep = bot.steps[firstStep.nextStepId] as ProcessSteps
       await this.handleNextStep(nextStep, reply)
+      chats[0].currentChat.status = 'in progress'
+      chats[0].stepIndex = '2'
     } else {
       const currentStep = bot.steps[chat.stepIndex] as ProcessSteps
       if (this.responseIsValid(currentStep, data)) {
@@ -32,6 +36,9 @@ export class WhatsAppListener implements IWhatsAppListener {
             await this.handleNextStep(nextStep, reply)
             if (nextStep.type === 'finish-step') {
               chats[0].stepIndex = '1'
+              chats[0].currentChat.status = 'finished'
+            } else {
+              chats[0].currentChat.status = 'in progress'
             }
           }
         }
