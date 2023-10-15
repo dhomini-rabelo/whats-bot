@@ -41,19 +41,16 @@ export interface ChatHistoric {
 
 //* BOT STRUCTURE
 
-export interface BaseOption {
-  nextStepId: string
-}
-
-export interface StringOption extends BaseOption {
-  type: 'string'
+export interface Option {
+  nextStepId?: string
   response: string
 }
 
-export interface NumericOption extends BaseOption {
-  type: 'numeric'
-  response: string
-}
+export type StepTypes =
+  | 'text-step'
+  | 'options-step'
+  | 'start-step'
+  | 'finish-step'
 
 export interface TextStep extends Question {
   type: 'text-step'
@@ -62,7 +59,10 @@ export interface TextStep extends Question {
 
 export interface OptionsStep extends Question {
   type: 'options-step'
-  options: Array<NumericOption | StringOption>
+  options: Array<Option>
+  optionType: 'numeric' | 'text'
+  nextStepId?: string
+  acceptText?: boolean
 }
 
 export interface StartStep {
@@ -77,10 +77,13 @@ export interface FinishStep {
   message: string
 }
 
+export type ProcessSteps = TextStep | OptionsStep | FinishStep
+
+export type Steps = ProcessSteps | StartStep
 export interface Bot {
   name: string
   description: string
-  steps: Record<string, TextStep | OptionsStep | StartStep | FinishStep>
+  steps: Record<string, Steps>
   responseForError: string
   // expirationTime: number = 60 * 60 - 1 hour
 }
