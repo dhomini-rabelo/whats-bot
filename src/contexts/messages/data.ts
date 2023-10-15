@@ -1,4 +1,4 @@
-import { Bot, Chat } from './schemas'
+import { Bot } from './schemas'
 
 export const bots: Bot[] = [
   {
@@ -8,7 +8,7 @@ export const bots: Bot[] = [
     steps: {
       '1': {
         type: 'start-step',
-        startMessage: 'Olá, boa noite!',
+        startMessage: 'Olá!',
         nextStepId: '2',
       },
       '2': {
@@ -97,7 +97,7 @@ export const bots: Bot[] = [
       },
       '7': {
         type: 'finish-step',
-        message: 'Obrigado!',
+        message: 'Obrigado! Envie uma nova mensagem para reiniciar o bate-papo',
       },
     },
   },
