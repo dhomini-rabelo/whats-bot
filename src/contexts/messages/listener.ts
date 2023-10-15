@@ -22,19 +22,40 @@ export class WhatsAppListener implements IWhatsAppListener {
       await this.handleNextStep(nextStep, reply)
     } else {
       const currentStep = bot.steps[chat.stepIndex] as ProcessSteps
-      const nextStepId = this.getNextStepId(currentStep, data)
-      if (nextStepId) {
-        const nextStep = bot.steps[nextStepId] as ProcessSteps | undefined
-        if (nextStep) {
-          chats[0].stepIndex = nextStepId
-          await this.handleNextStep(nextStep, reply)
-          if (nextStep.type === 'finish-step') {
-            chats[0].stepIndex = '1'
+      if (this.responseIsValid(currentStep, data)) {
+        // continue
+        const nextStepId = this.getNextStepId(currentStep, data)
+        if (nextStepId) {
+          const nextStep = bot.steps[nextStepId] as ProcessSteps | undefined
+          if (nextStep) {
+            chats[0].stepIndex = nextStepId
+            await this.handleNextStep(nextStep, reply)
+            if (nextStep.type === 'finish-step') {
+              chats[0].stepIndex = '1'
+            }
           }
         }
+      } else {
+        await reply.withText('Resposta não identificada!')
+        await this.handleNextStep(currentStep, reply)
       }
     }
     console.log({ chats, data })
+  }
+
+  private responseIsValid(step: ProcessSteps, data: IOnMessageData): boolean {
+    if (step.type === 'options-step') {
+      if (step.optionType === 'numeric') {
+        return step.options[data.text] !== undefined
+      }
+      if (step.optionType === 'text') {
+        const option = step.options.find(
+          (option) => option.response.toLowerCase() === data.text.toLowerCase(),
+        )
+        return option !== undefined
+      }
+    }
+    return true
   }
 
   private getNextStepId(
@@ -53,7 +74,7 @@ export class WhatsAppListener implements IWhatsAppListener {
         }
       } else if (currentStep.optionType === 'text') {
         const option = currentStep.options.find(
-          (option) => option.response === data.text,
+          (option) => option.response.toLowerCase() === data.text.toLowerCase(),
         )
         if (option && option.nextStepId) {
           return option.nextStepId
@@ -70,6 +91,7 @@ export class WhatsAppListener implements IWhatsAppListener {
         await reply.withText(
           [
             nextStep.message,
+            '',
             ...nextStep.options.map(
               (option, index) => `${index} - ${option.response}`,
             ),
@@ -79,7 +101,8 @@ export class WhatsAppListener implements IWhatsAppListener {
         await reply.withText(
           [
             nextStep.message,
-            ...nextStep.options.map((option) => option.response),
+            '',
+            ...nextStep.options.map((option) => `- ${option.response}`),
           ].join('\n'),
         )
       }
