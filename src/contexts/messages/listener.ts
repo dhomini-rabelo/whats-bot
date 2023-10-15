@@ -4,17 +4,7 @@ import {
   IWhatsAppListener,
 } from '../../application/dependencies/whatsapp-provider/interfaces/listener'
 import { bots } from './data'
-import {
-  Bot,
-  Chat,
-  FinishStep,
-  OptionsStep,
-  StartStep,
-  ProcessSteps,
-  TextStep,
-  StepTypes,
-  Steps,
-} from './schemas'
+import { Chat, StartStep, ProcessSteps, FinishStep } from './schemas'
 
 const chats: Chat[] = []
 
@@ -38,6 +28,10 @@ export class WhatsAppListener implements IWhatsAppListener {
         if (nextStep) {
           chats[0].stepIndex = nextStepId
           await this.handleNextStep(nextStep, reply)
+          if (nextStep.type === 'finish-step') {
+            const firstStep = bot.steps['1'] as StartStep
+            chats[0].stepIndex = firstStep.nextStepId
+          }
         }
       }
     }
@@ -75,19 +69,19 @@ export class WhatsAppListener implements IWhatsAppListener {
     } else if (nextStep.type === 'options-step') {
       if (nextStep.optionType === 'numeric') {
         await reply.withText(
-          `
-            ${nextStep.message}
-            ${nextStep.options
-              .map((option, index) => `${index} - ${option.response}`)
-              .join('\n')}
-          `.trim(),
+          [
+            nextStep.message,
+            ...nextStep.options.map(
+              (option, index) => `${index} - ${option.response}`,
+            ),
+          ].join('\n'),
         )
       } else if (nextStep.optionType === 'text') {
         await reply.withText(
-          `
-            ${nextStep.message}
-            ${nextStep.options.map((option) => `${option.response}`).join('\n')}
-          `.trim(),
+          [
+            nextStep.message,
+            ...nextStep.options.map((option) => option.response),
+          ].join('\n'),
         )
       }
     } else if (nextStep.type === 'finish-step') {

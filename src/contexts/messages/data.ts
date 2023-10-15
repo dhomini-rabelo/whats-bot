@@ -85,7 +85,10 @@ export const bots: Bot[] = [
         acceptText: true,
         options: [
           {
-            response: 'Motorola',
+            response: '14',
+          },
+          {
+            response: '14 Pro Max',
           },
           {
             response: 'Outro',
