@@ -17,10 +17,17 @@ export class BailyesWhatsAppProvider extends WhatsAppProvider {
       const messageBody = body.messages[0]
       console.log(JSON.stringify(messageBody, undefined, 2))
       const senderId = messageBody.key.remoteJid
-      if (messageBody.key.fromMe === true && typeof senderId === 'string') {
+      if (messageBody.key.fromMe === false && typeof senderId === 'string') {
         this.listener.onMessage(
           {
-            text: messageBody.message?.extendedTextMessage?.text || '',
+            text: messageBody.message?.conversation || '',
+            contact: {
+              name: messageBody.pushName || '',
+              phone: senderId,
+            },
+            timestamp: messageBody.messageTimestamp
+              ? String(messageBody.messageTimestamp)
+              : '',
           },
           {
             withText: async (text: string) => {
