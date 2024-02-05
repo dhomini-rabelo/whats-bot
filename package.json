@@ -16,8 +16,6 @@
     "express": "^4.18.2",
     "qrcode-terminal": "^0.12.0",
     "tsx": "^3.13.0",
-    "venom-bot": "^4.2.1",
-    "whatsapp-web.js": "^1.22.1",
     "zod": "^3.22.4"
   },
   "devDependencies": {
